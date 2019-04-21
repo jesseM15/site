@@ -1,0 +1,47 @@
+<VirtualHost *:80>
+  DocumentRoot /var/www/{site}/html
+  ServerName {site}.box
+  ServerAlias www.{site}.box
+  <Directory /var/www/{site}>
+    AllowOverride All
+  </Directory>
+  <Directory /var/www/{site}/html>
+    RewriteEngine On
+    # Force HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    # Hide index.php from path
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [L,NS]
+  </Directory>
+  CustomLog /var/log/httpd/{site}/access combined
+  ErrorLog /var/log/httpd/{site}/error
+  SetEnv SITE_ENV box
+</VirtualHost>
+
+<VirtualHost *:443>
+  DocumentRoot /var/www/{site}/html
+  ServerName {site}.box
+  ServerAlias www.{site}.box
+  <Directory /var/www/{site}>
+    AllowOverride All
+  </Directory>
+  <Directory /var/www/{site}/html>
+    RewriteEngine On
+    # Force HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    # Hide index.php from path
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [L,NS]
+  </Directory>
+  CustomLog /var/log/httpd/{site}/access combined
+  ErrorLog /var/log/httpd/{site}/error
+  SetEnv SITE_ENV box
+  SSLEngine on
+  SSLCertificateFile /etc/httpd/ssl/generic.crt
+  SSLCertificateKeyFile /etc/httpd/ssl/generic.key
+</VirtualHost>
+

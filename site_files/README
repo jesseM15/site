@@ -1,0 +1,40 @@
+NAME
+       site - create an empty website 
+
+SYNOPSIS
+       site PROJECTNAME [OPTION]...
+       site [-h | -V | -w]
+
+DESCRIPTION
+       Creates boilerplate set up files and directories for an apache website using the PROJECTNAME as a common naming convention.  By default this script 
+       will create an http configuration file(.conf), a project root directory containing an html directory as the public root, and a directory for log 
+       files.  Then apache will be restarted, optionally git will be initialized and optionally a framework will be installed.  Finally file permissions 
+       and ownership will be set.  Typically the only other action required will be to update your hosts file.
+
+       Note this script may require granting permissions, such as with sudo.
+
+       -d
+              Delete files and directories related to the PROJECTNAME.  Will prompt before deletion.
+
+       -f=FRAMEWORK
+              Downloads and installs the latest version of the FRAMEWORK.  The installation is opinionated, such as removing documentation.
+              Supported FRAMEWORKs:
+              ci     CodeIgniter
+
+       -g
+              Initializes git in the project_path root.  Note this setting may be enabled by default via the Configuration wizard.
+
+       -h
+              Displays help text(this file).
+
+       -V
+              Displays the version number.
+
+       -v
+              Enables verbose text.
+
+       -w
+              Starts the Configuration wizard.
+
+AUTHOR
+       Written by Jesse Merritt.

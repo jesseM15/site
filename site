@@ -1,0 +1,122 @@
+#!/bin/sh
+# Creates an httpd config for a web site
+# Requires wget, unzip
+
+command="site"
+version="1.0"
+command_root="/bin/${command}_files/"
+
+if [ -f "${command_root}functions.sh" ]; then
+  source "${command_root}functions.sh"
+else
+  printf "${command_root}functions.sh not found!  Project setup halted.\n"
+  exit 1
+fi
+
+framework=""
+git=false
+verbose=false
+wizard=false
+delete=false
+help=false
+
+if [[ $1 != -* ]]; then
+  site=$1
+  OPTIND=2
+elif [ $1 != "-V" ] && [ $1 != "-w" ] && [ $1 != "-h" ]; then
+  printf "Please format your command as: {command} {projectname} -{options}\n"
+  exit 1
+fi
+
+while getopts ":d :f: :g :h :V :v :w" opt; do
+  set_option $opt
+done
+
+initialize_command "${command_root}$command.cfg"
+
+if [ "${delete}" == true ]; then
+  delete_project
+fi
+
+if [ "${wizard}" == true ]; then
+  config_wizard
+fi
+
+if [ "${help}" == true ]; then
+  if [ -f "${command_root}README" ]; then
+    cat "${command_root}README"
+    exit 1
+  else
+    printf "README (used for help text) file not found at ${command_root}README.\n"
+    printf "Help mode halted\n"
+    exit 1
+  fi
+fi
+
+write_http_config
+verbose_output "Config file created at ${conf_path}"
+
+create_directory "${project_path}/"
+verbose_output "Project directory created at ${project_path}/"
+
+create_directory "${project_path}/html/"
+verbose_output "Public root created at ${project_path}/html/"
+
+IFS=' ' read -ra line <<< "$(grep CustomLog ${conf_path})"
+access_path="${line[1]}"
+IFS=' ' read -ra line <<< "$(grep ErrorLog ${conf_path})"
+error_path="${line[1]}"
+
+create_directory "$(dirname "$access_path")"
+verbose_output "Log directory created at $(dirname "$access_path")"
+
+create_file "$access_path"
+verbose_output "Access log created at $access_path"
+
+create_file "$error_path"
+verbose_output "Error log created at $error_path"
+
+printf "Restarting Apache...\n"
+if $(apachectl restart 2> /dev/null); then
+  printf "Apache restarted successfully\n"
+else
+  printf "Apache had trouble restarting: (Error $?)\n"
+  exit 1
+fi
+
+if [ "${git}" == true ];then
+  if $(git init -q ${project_path}); then
+    verbose_output "Initialized git at ${project_path}/.git"
+  else
+    printf "There was a problem initializing git: (Error $?)\n"
+    exit 1
+  fi
+fi
+
+if [ "$framework" != "" ]; then
+  install_framework "$framework"
+else
+  if [ -f "${command_root}index_template" ]; then
+    cp "${command_root}index_template" "${project_path}/html/index.php"
+  else
+    printf "Index file not found.  Create ${command_root}index_template if an index file is desired.  Skipping...\n"
+  fi
+fi
+
+if $(chown -R ${user}:${group} ${project_path}); then
+  verbose_output "Set user:group of project root directory to ${user}:${group}"
+else
+  printf "There was a problem setting user/group ownerhip of project root directory: (Error $?)\n"
+  exit 1
+fi
+
+if $(chmod -R ${permission} ${project_path}); then
+  verbose_output "Set permission of project root directory to ${permission}"
+else
+  printf "There was a problem setting permission of project root directory: (Error $?)\n"
+  exit 1
+fi
+
+printf "Project successfully created!\n"
+exit 0
+
