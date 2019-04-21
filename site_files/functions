@@ -38,6 +38,10 @@ set_option() {
       help=true
       printf "Help mode enabled.\n"
       ;;
+    ?)
+      help=true
+      printf "Help mode enabled.\n"
+      ;;
     \?)
       printf "Invalid option: -${OPTARG}\n"
       exit 1
@@ -244,7 +248,7 @@ delete_project() {
     rm -f "${conf_path}"
     rm -rf "${log_path}"
     rm -rf "${project_path}"
-    printf "Project has been deleted!\n"
+    printf "Project ${site} deleted!\n"
     exit 1
   else
     printf "No files to delete.  Delete mode halted.\n"
@@ -328,14 +332,15 @@ create_file() {
 # $1 framework
 install_framework() {
   if [ "$1" == "ci" ]; then
-    printf "Downloading CodeIgniter...\n"
+    printf "Downloading CodeIgniter... "
     if $(wget https://github.com/bcit-ci/CodeIgniter/archive/3.1.9.zip -O ${project_path}/ci.zip 2> /dev/null); then
       if $(unzip -qq ${project_path}/ci.zip -d ${project_path}/unzipped/ 2> /dev/null); then
         if $(cp -a ${project_path}/unzipped/CodeIgniter*/. ${project_path}/html/ 2> /dev/null); then
           rm -rf ${project_path}/unzipped/ 2> /dev/null
           rm -f ${project_path}/ci.zip
           rm -rf ${project_path}/html/user_guide/
-          printf "Codeigniter installed at ${project_path}/html\n"
+          printf "Done\n"
+          verbose_output "Codeigniter installed at ${project_path}/html"
         else
           printf "There was a problem copying unzipped CodeIgniter files: (Error $?)\n"
           exit 1
@@ -345,6 +350,7 @@ install_framework() {
         exit 1
       fi
     else
+      printf "Error\n"
       printf "There was a problem downloading CodeIgniter: (Error $?)\n"
       exit 1
     fi

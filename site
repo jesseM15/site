@@ -24,12 +24,12 @@ help=false
 if [[ $1 != -* ]]; then
   site=$1
   OPTIND=2
-elif [ $1 != "-V" ] && [ $1 != "-w" ] && [ $1 != "-h" ]; then
+elif [ $1 != "-V" ] && [ $1 != "-w" ] && [ $1 != "-h" ] && [ $1 != "-?" ]; then
   printf "Please format your command as: {command} {projectname} -{options}\n"
   exit 1
 fi
 
-while getopts ":d :f: :g :h :V :v :w" opt; do
+while getopts ":d :f: :g :h :V :v :w :?" opt; do
   set_option $opt
 done
 
@@ -77,10 +77,11 @@ verbose_output "Access log created at $access_path"
 create_file "$error_path"
 verbose_output "Error log created at $error_path"
 
-printf "Restarting Apache...\n"
+printf "Restarting Apache... "
 if $(apachectl restart 2> /dev/null); then
-  printf "Apache restarted successfully\n"
+  printf "Success\n"
 else
+  printf "Error\n"
   printf "Apache had trouble restarting: (Error $?)\n"
   exit 1
 fi
@@ -118,5 +119,5 @@ else
   exit 1
 fi
 
-printf "Project successfully created!\n"
+printf "Project ${site} created!\n"
 exit 0

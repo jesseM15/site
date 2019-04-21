@@ -3,7 +3,7 @@ NAME
 
 SYNOPSIS
        site PROJECTNAME [OPTION]...
-       site [-h | -V | -w]
+       site [-? | -h | -V | -w]
 
 DESCRIPTION
        Creates boilerplate set up files and directories for an apache website using the PROJECTNAME as a common naming convention.  By default this script 
@@ -24,7 +24,7 @@ DESCRIPTION
        -g
               Initializes git in the project_path root.  Note this setting may be enabled by default via the Configuration wizard.
 
-       -h
+       -h, -?
               Displays help text(this file).
 
        -V
