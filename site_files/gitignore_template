@@ -1,27 +1,3 @@
+vendor/
+
 .DS_Store
-
-html/application/cache/*
-!html/application/cache/index.html
-
-html/application/logs/*
-!html/application/logs/index.html
-
-!html/application/*/.htaccess
-
-composer.lock
-
-/vendor/
-
-# IDE Files
-#-------------------------
-/nbproject/
-.idea/*
-
-## Sublime Text cache files
-*.tmlanguage.cache
-*.tmPreferences.cache
-*.stTheme.cache
-*.sublime-workspace
-*.sublime-project
-html/tests/tests/
-html/tests/results/

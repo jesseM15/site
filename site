@@ -4,10 +4,11 @@
 
 command="site"
 version="1.0"
-command_root="/bin/${command}_files/"
+command_dir=$(dirname $0)
+command_root="${command_dir}/${command}_files/"
 
-if [ -f "${command_root}functions.sh" ]; then
-  source "${command_root}functions.sh"
+if [ -f "${command_root}functions" ]; then
+  source "${command_root}functions"
 else
   printf "${command_root}functions.sh not found!  Project setup halted.\n"
   exit 1
@@ -119,4 +120,3 @@ fi
 
 printf "Project successfully created!\n"
 exit 0
-
